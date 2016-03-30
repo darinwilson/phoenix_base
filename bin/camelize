@@ -1,0 +1,27 @@
+#!/usr/bin/env elixir
+
+defmodule PBCamelizer do
+  @moduledoc """
+  This converts the given string to camel case. The implementation was lifted
+  from: https://github.com/nurugger07/inflex - to avoid having a dependency here
+  """
+  def camelize(word, option\\:upper) do
+    case Regex.split(~r/(?:^|[-_])|(?=[A-Z])/, to_string(word)) do
+      words -> words |> camelize_list(option)
+                    |> Enum.join
+    end
+  end
+
+  defp camelize_list([], :upper), do: []
+  defp camelize_list([h|tail], :lower) do
+    [lowercase(h)] ++ camelize_list(tail, :upper)
+  end
+  defp camelize_list([h|tail], :upper) do
+    [capitalize(h)] ++ camelize_list(tail, :upper)
+  end
+
+  def capitalize(word), do: String.capitalize(word)
+  def lowercase(word), do: String.downcase(word)
+end
+
+IO.puts PBCamelizer.camelize(List.first(System.argv))

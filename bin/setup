@@ -19,6 +19,21 @@ command -v npm >/dev/null 2>&1 || {
   exit 1
 }
 
+# Rename PhoenixBase throughout the codebase
+echo "What is the name of your app? [MyApp] "
+read new_name
+if [[ -z $new_name ]]; then
+  new_name="MyApp"
+fi
+camel_case_name=`./bin/camelize $new_name`
+underscore_name=`./bin/underscore $new_name`
+export LC_ALL=C
+sed -i '' -e "s/PhoenixBase/$camel_case_name/" `find . -name '*.ex*'`
+sed -i '' -e "s/%PhoenixBase/$camel_case_name/" `find . -name '*.ex*'`
+sed -i '' -e "s/phoenix_base/$underscore_name/" `find . -name '*.ex*'`
+mv lib/phoenix_base lib/$underscore_name
+mv lib/phoenix_base.ex lib/$underscore_name.ex
+
 echo "----------------------------------------------------------"
 echo "Ensuring Hex is installed..."
 echo "----------------------------------------------------------"
@@ -50,4 +65,13 @@ echo "----------------------------------------------------------"
 echo "Setup complete!"
 echo "----------------------------------------------------------"
 
+echo "If you cloned PhoenixBase from Github, you may want to reinitialize git:"
+echo "    rm -rf .git/"
+echo ""
+echo "You might also want to rename this directory to your app name:"
+echo "    cd .."
+echo "    mv phoenix_base $underscore_name"
+echo ""
 echo "Run the web server with mix phoenix.server, and view localhost:4000"
+echo ""
+

@@ -1,0 +1,17 @@
+#!/usr/bin/env elixir
+
+defmodule PBUnderscorer do
+  @moduledoc """
+  This converts the given string to underscore. The implementation was lifted
+  from: https://github.com/nurugger07/inflex - to avoid having a dependency here
+  """
+  def underscore(word) when is_binary(word) do
+    word
+    |> String.replace(~r/([A-Z]+)([A-Z][a-z])/, "\\1_\\2")
+    |> String.replace(~r/([a-z\d])([A-Z])/, "\\1_\\2")
+    |> String.replace(~r/-/, "_")
+    |> String.downcase
+  end
+end
+
+IO.puts PBUnderscorer.underscore(List.first(System.argv))
